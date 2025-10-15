@@ -3,7 +3,7 @@ import random
 def createBoard(n):
     newBoard = []
     for i in range(n):
-        newBoard[i] = random.randint(0,n-1)
+        newBoard.append(random.randint(0,n-1))
     return newBoard
 
 def checkScore(queenArray,n):
@@ -19,7 +19,6 @@ def checkScore(queenArray,n):
         
             if(row == queenArray[newCol] or upperDiagonal == newUpperDiagonal or lowerDiagonal == newLowerDiagonal):
                 hscore += 1
-    print(counter)
     return hscore
 
 def testScore(queenArray, n, currentScore):
@@ -30,6 +29,35 @@ def testScore(queenArray, n, currentScore):
             if(row != newRow): #Do not check the row that we are already in
                 newArray[col] = newRow
                 tempScore = checkScore(newArray, n)
-                if(tempScore < currentScore):
+                if(tempScore < newScore):
                     newScore = tempScore
-print(checkScore([0,0,3,3], 4))
+                    tempArray = newArray
+    if(newScore >= currentScore): #No better score found Hill-Climb search is stuck here
+        return False
+    else:
+        queenArray = tempArray
+        currentScore = newScore
+        return True
+    
+def Main():
+    n = 4
+    mainBoard = createBoard(n)
+    currentScore = checkScore(mainBoard, n)
+    if (currentScore == 0): #Checks if the board was perfect when generated (GOOD CODE)
+        print("Board was perfect from the start!")
+        return
+    
+    for i in range (1000): #The number of steps we will currently take in our hill climb before breaking
+        result = testScore(mainBoard, n, currentScore)
+        if(result == False):
+            print("No Solution Found (Hill Climb Stuck)")
+            print(mainBoard)
+            print(currentScore)
+            return
+        if(currentScore == 0):
+            print("Solution Found")
+            print(mainBoard)
+            print(currentScore)
+            return
+
+Main()
