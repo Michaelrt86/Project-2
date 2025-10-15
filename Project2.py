@@ -1,6 +1,11 @@
 import random
 import copy
 
+class Board: 
+    def __init__(self, scoreGiven, boardGiven):
+        self.currentScore = scoreGiven
+        self.queenArray = boardGiven
+
 def createBoard(n):
     newBoard = []
     for i in range(n):
@@ -24,6 +29,7 @@ def checkScore(queenArray,n):
 
 def testScore(queenArray, n, currentScore):
     newScore = currentScore
+    copy.deepcopy(queenArray)
     for col, row in enumerate(queenArray): #Row is where we are starting in the row
         newArray = copy.deepcopy(queenArray)
         for newRow in range(n):
@@ -32,13 +38,12 @@ def testScore(queenArray, n, currentScore):
                 tempScore = checkScore(newArray, n)
                 if(tempScore < newScore):
                     newScore = tempScore
-                    tempArray = newArray
-    if(newScore >= currentScore): #No better score found Hill-Climb search is stuck here
-        return False
-    else:
-        queenArray = tempArray
-        currentScore = newScore
-        return True
+                    tempArray = copy.deepcopy(newArray)
+
+        # queenArray = copy.deepcopy(tempArray)
+    newBoard = Board(newScore, copy.deepcopy(tempArray))
+    print(tempArray)
+    return newBoard
     
 def Main():
     n = 4
@@ -51,15 +56,22 @@ def Main():
     
     for i in range (1000): #The number of steps we will currently take in our hill climb before breaking
         result = testScore(mainBoard, n, currentScore)
-        if(result == False):
+        if(result.currentScore >= currentScore):
             print("No Solution Found (Hill Climb Stuck)")
-            print(mainBoard)
-            print(currentScore)
+            print(result.queenArray)
+            print(result.currentScore)
             return
-        if(currentScore == 0):
+        if(result.currentScore == 0):
             print("Solution Found")
-            print(mainBoard)
-            print(currentScore)
+            print(result.queenArray)
+            print(result.currentScore)
             return
+        # else:
+        #     print("ERROR")
+        #     print(result.queenArray)
+        #     print(result.currentScore)
+        print(result.queenArray)
+        mainBoard = copy.deepcopy(result.queenArray)
+        currentScore = result.currentScore
 
 Main()
