@@ -1,4 +1,5 @@
 import random
+import copy
 
 def createBoard(n):
     newBoard = []
@@ -24,7 +25,7 @@ def checkScore(queenArray,n):
 def testScore(queenArray, n, currentScore):
     newScore = currentScore
     for col, row in enumerate(queenArray): #Row is where we are starting in the row
-        newArray = queenArray
+        newArray = copy.deepcopy(queenArray)
         for newRow in range(n):
             if(row != newRow): #Do not check the row that we are already in
                 newArray[col] = newRow
@@ -41,7 +42,8 @@ def testScore(queenArray, n, currentScore):
     
 def Main():
     n = 4
-    mainBoard = createBoard(n)
+    # mainBoard = createBoard(n)
+    mainBoard = [2,1,2,1]
     currentScore = checkScore(mainBoard, n)
     if (currentScore == 0): #Checks if the board was perfect when generated (GOOD CODE)
         print("Board was perfect from the start!")
