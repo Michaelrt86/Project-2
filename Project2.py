@@ -14,18 +14,44 @@ def createBoard(n): #generate a random board of size nxn
 
 def checkScore(queenArray,n): #calculate the heuritic score of a given board
     hscore = 0
-    counter = 0
     for col, row in enumerate(queenArray): #all values on a given diagonal calculate the same value with these formulas
         upperDiagonal = row - col 
         lowerDiagonal = row - (n - col)
         for newCol in range(col + 1, n):
             newUpperDiagonal = queenArray[newCol] - newCol
             newLowerDiagonal = queenArray[newCol] - (n - newCol)
-            counter += 1
             #check if the two queens are in conflict on the row or either diagonal 
             if(row == queenArray[newCol] or upperDiagonal == newUpperDiagonal or lowerDiagonal == newLowerDiagonal):
                 hscore += 1
     return hscore
+
+def checkScoreOptimal(queenArray, n, currentScore, oldRow, movedCol): #calculate the heuritic score of a given board
+    for col, row in enumerate(queenArray): #all values on a given diagonal calculate the same value with these formulas
+        if col != movedCol:
+            #scoring col values
+            upperDiagonal = row - col 
+            lowerDiagonal = row - (n - col)
+            #old values
+            upperDiagonalOld = oldRow - movedCol 
+            lowerDiagonalOld = oldRow - (n - movedCol)
+            #new values
+            upperDiagonalNew = queenArray[movedCol] - movedCol 
+            lowerDiagonalNew = queenArray[movedCol] - (n - movedCol)
+
+            oldConflict = row == oldRow or upperDiagonal == upperDiagonalOld or lowerDiagonal == lowerDiagonalOld
+            newConflict = row == queenArray[movedCol] or upperDiagonal == upperDiagonalNew or lowerDiagonal == lowerDiagonalNew
+            
+            if oldConflict and not newConflict:
+                currentScore -= 1
+            elif newConflict and not oldConflict:
+                currentScore += 1
+        #for newCol in range(col + 1, n):
+            #newUpperDiagonal = queenArray[newCol] - newCol
+            #newLowerDiagonal = queenArray[newCol] - (n - newCol)
+            #check if the two queens are in conflict on the row or either diagonal 
+            #if(row == queenArray[newCol] or upperDiagonal == newUpperDiagonal or lowerDiagonal == newLowerDiagonal):
+                #hscore += 1
+    return currentScore
 
 def testScoreBase(queenArray, n, currentScore):
     newScore = currentScore
@@ -35,7 +61,8 @@ def testScoreBase(queenArray, n, currentScore):
         for newRow in range(n):
             if(row != newRow): #Do not check the row that we are already in
                 newArray[col] = newRow
-                tempScore = checkScore(newArray, n)
+                tempScore = checkScoreOptimal(newArray, n, currentScore, row, col)
+                #tempScore = checkScore(newArray, n)
                 if(tempScore < newScore):
                     newScore = tempScore
                     tempArray = copy.deepcopy(newArray)
@@ -51,7 +78,7 @@ def testScoreSideways(queenArray, n, currentScore):
         for newRow in range(n):
             if(row != newRow): #Do not check the row that we are already in
                 newArray[col] = newRow
-                tempScore = checkScore(newArray, n)
+                tempScore = checkScoreOptimal(newArray, n, currentScore, row, col)
                 if tempScore < newScore:
                     newScore = tempScore
                     tempArray = copy.deepcopy(newArray)
@@ -96,18 +123,22 @@ def sidewaysHillClimb(n):
     for i in range (1000): #The number of steps we will currently take in our hill climb before breaking
         result, sidewaysArray = testScoreSideways(mainBoard, n, currentScore)
         print(result.queenArray)
-        if result.currentScore > currentScore or sidewaysCount == 100:
+        if result.currentScore > currentScore or sidewaysCount == 10:
             print("No Solution Found (Hill Climb Stuck)")
             print(result.queenArray)
             print(result.currentScore)
-            return i + 1, False
+            return i + 1, True
         elif result.currentScore == 0:
             print("Solution Found")
             print(result.queenArray)
             print(result.currentScore)
             return i + 1, True
         elif result.currentScore == currentScore:
-            mainBoard = copy.deepcopy(sidewaysArray[random.randint(0, len(sidewaysArray) - 1)])
+            print(f"{sidewaysArray} sideways array list")
+            if len(sidewaysArray) == 1:
+                mainBoard = copy.deepcopy(sidewaysArray[0])
+            else:
+                mainBoard = copy.deepcopy(sidewaysArray[random.randint(0, len(sidewaysArray) - 1)])
             sidewaysCount += 1
             continue
         mainBoard = copy.deepcopy(result.queenArray)
