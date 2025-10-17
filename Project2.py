@@ -184,8 +184,10 @@ if solveMethod == "1":
             passes.append(numSteps)
         else:
             fails.append(numSteps)
-    print(f"{sum(passes)/len(passes)} average steps for success")
-    print(f"{sum(fails)/len(fails)} average steps for fails")
+    if len(passes) != 0:
+        print(f"{sum(passes)/len(passes)} average steps for success")
+    if len(fails) != 0:
+        print(f"{sum(fails)/len(fails)} average steps for fails")
 elif solveMethod == "2":
     for i in range(int(numOfLoops)):
         numSteps, ifSucceeded = sidewaysHillClimb(int(nSize))
@@ -194,8 +196,10 @@ elif solveMethod == "2":
             passes.append(numSteps)
         else:
             fails.append(numSteps)
-    print(f"{sum(passes)/len(passes)} average steps for success")
-    print(f"{sum(fails)/len(fails)} average steps for fails")
+    if len(passes) != 0:
+        print(f"{sum(passes)/len(passes)} average steps for success")
+    if len(fails) != 0:
+        print(f"{sum(fails)/len(fails)} average steps for fails")
 elif solveMethod == "3":
     for i in range(int(numOfLoops)):
         numRestarts, numSteps = baseHillClimbRestart(int(nSize), -1, 0)
