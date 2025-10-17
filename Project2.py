@@ -6,23 +6,23 @@ class Board:
         self.currentScore = scoreGiven
         self.queenArray = boardGiven
 
-def createBoard(n):
+def createBoard(n): #generate a random board of size nxn
     newBoard = []
     for i in range(n):
         newBoard.append(random.randint(0,n-1))
     return newBoard
 
-def checkScore(queenArray,n):
+def checkScore(queenArray,n): #calculate the heuritic score of a given board
     hscore = 0
     counter = 0
-    for col, row in enumerate(queenArray):
-        upperDiagonal = row - col
+    for col, row in enumerate(queenArray): #all values on a given diagonal calculate the same value with these formulas
+        upperDiagonal = row - col 
         lowerDiagonal = row - (n - col)
         for newCol in range(col + 1, n):
             newUpperDiagonal = queenArray[newCol] - newCol
             newLowerDiagonal = queenArray[newCol] - (n - newCol)
             counter += 1
-        
+            #check if the two queens are in conflict on the row or either diagonal 
             if(row == queenArray[newCol] or upperDiagonal == newUpperDiagonal or lowerDiagonal == newLowerDiagonal):
                 hscore += 1
     return hscore
@@ -39,8 +39,6 @@ def testScoreBase(queenArray, n, currentScore):
                 if(tempScore < newScore):
                     newScore = tempScore
                     tempArray = copy.deepcopy(newArray)
-
-        # queenArray = copy.deepcopy(tempArray)
     newBoard = Board(newScore, copy.deepcopy(tempArray))
     return newBoard
 
@@ -59,19 +57,16 @@ def testScoreSideways(queenArray, n, currentScore):
                     tempArray = copy.deepcopy(newArray)
                 elif tempScore == currentScore:
                     sidewaysMoves.append(newArray)
-
-        # queenArray = copy.deepcopy(tempArray)
     newBoard = Board(newScore, copy.deepcopy(tempArray))
     return newBoard, sidewaysMoves
 
 def baseHillClimb(n):
-    # mainBoard = createBoard(n)
     mainBoard = createBoard(n)
     print(mainBoard)
     currentScore = checkScore(mainBoard, n)
     if (currentScore == 0): #Checks if the board was perfect when generated (GOOD CODE)
         print("Board was perfect from the start!")
-        return
+        return 0, True
     
     for i in range (1000): #The number of steps we will currently take in our hill climb before breaking
         result = testScoreBase(mainBoard, n, currentScore)
@@ -79,29 +74,24 @@ def baseHillClimb(n):
             print("No Solution Found (Hill Climb Stuck)")
             print(result.queenArray)
             print(result.currentScore)
-            return
+            return i + 1, False
         if(result.currentScore == 0):
             print("Solution Found")
             print(result.queenArray)
             print(result.currentScore)
-            return
-        # else:
-        #     print("ERROR")
-        #     print(result.queenArray)
-        #     print(result.currentScore)
+            return i + 1, True
         print(result.queenArray)
         mainBoard = copy.deepcopy(result.queenArray)
         currentScore = result.currentScore
 
 def sidewaysHillClimb(n):
     sidewaysCount = 0
-    # mainBoard = createBoard(n)
     mainBoard = createBoard(n)
     print(mainBoard)
     currentScore = checkScore(mainBoard, n)
     if (currentScore == 0): #Checks if the board was perfect when generated (GOOD CODE)
         print("Board was perfect from the start!")
-        return
+        return 0, True
     
     for i in range (1000): #The number of steps we will currently take in our hill climb before breaking
         result, sidewaysArray = testScoreSideways(mainBoard, n, currentScore)
@@ -109,34 +99,29 @@ def sidewaysHillClimb(n):
             print("No Solution Found (Hill Climb Stuck)")
             print(result.queenArray)
             print(result.currentScore)
-            return
+            return i + 1, False
         elif result.currentScore == 0:
             print("Solution Found")
             print(result.queenArray)
             print(result.currentScore)
-            return
+            return i + 1, True
         elif result.currentScore == currentScore:
             mainBoard = copy.deepcopy(sidewaysArray[random.randint(0, len(sidewaysArray) - 1)])
             sidewaysCount += 1
             continue
-        # else:
-        #     print("ERROR")
-        #     print(result.queenArray)
-        #     print(result.currentScore)
         print(result.queenArray)
         mainBoard = copy.deepcopy(result.queenArray)
         currentScore = result.currentScore
         sidewaysCount = 0
 
-def baseHillClimbRestart(n, numOfRestarts):
+def baseHillClimbRestart(n, numOfRestarts, numOfSteps):
     numOfRestarts += 1
-    # mainBoard = createBoard(n)
     mainBoard = createBoard(n)
     print(mainBoard)
     currentScore = checkScore(mainBoard, n)
     if (currentScore == 0): #Checks if the board was perfect when generated (GOOD CODE)
         print("Board was perfect from the start!")
-        return
+        return numOfRestarts, numOfSteps
     
     for i in range (1000): #The number of steps we will currently take in our hill climb before breaking
         result = testScoreBase(mainBoard, n, currentScore)
@@ -144,31 +129,26 @@ def baseHillClimbRestart(n, numOfRestarts):
             print("No Solution Found (Hill Climb Stuck)")
             print(result.queenArray)
             print(result.currentScore)
-            return baseHillClimbRestart(numOfRestarts)
+            return baseHillClimbRestart(n, numOfRestarts, numOfSteps + i + 1)
         if(result.currentScore == 0):
             print("Solution Found")
             print(result.queenArray)
             print(result.currentScore)
             print(numOfRestarts)
-            return
-        # else:
-        #     print("ERROR")
-        #     print(result.queenArray)
-        #     print(result.currentScore)
+            return numOfRestarts, numOfSteps + i + 1
         print(result.queenArray)
         mainBoard = copy.deepcopy(result.queenArray)
         currentScore = result.currentScore
 
-def sidewaysHillClimbRestart(n, numOfRestarts):
+def sidewaysHillClimbRestart(n, numOfRestarts, numOfSteps):
     numOfRestarts += 1
     sidewaysCount = 0
-    # mainBoard = createBoard(n)
     mainBoard = createBoard(n)
     print(mainBoard)
     currentScore = checkScore(mainBoard, n)
     if (currentScore == 0): #Checks if the board was perfect when generated (GOOD CODE)
         print("Board was perfect from the start!")
-        return
+        return numOfRestarts, numOfSteps
     
     for i in range (1000): #The number of steps we will currently take in our hill climb before breaking
         result, sidewaysArray = testScoreSideways(mainBoard, n, currentScore)
@@ -176,21 +156,18 @@ def sidewaysHillClimbRestart(n, numOfRestarts):
             print("No Solution Found (Hill Climb Stuck)")
             print(result.queenArray)
             print(result.currentScore)
-            return sidewaysHillClimbRestart(numOfRestarts)
+            return sidewaysHillClimbRestart(n, numOfRestarts, numOfSteps + i + 1)
         elif result.currentScore == 0:
             print("Solution Found")
             print(result.queenArray)
             print(result.currentScore)
             print(numOfRestarts)
-            return
+            return numOfRestarts, numOfSteps + i + 1
         elif result.currentScore == currentScore:
             mainBoard = copy.deepcopy(sidewaysArray[random.randint(0, len(sidewaysArray) - 1)])
             sidewaysCount += 1
+            print("sideways move was done")
             continue
-        # else:
-        #     print("ERROR")
-        #     print(result.queenArray)
-        #     print(result.currentScore)
         print(result.queenArray)
         mainBoard = copy.deepcopy(result.queenArray)
         currentScore = result.currentScore
@@ -203,15 +180,44 @@ solveMethod = input("What solution methodolgy would you like to use?\n" \
 "                    2) Hill Climb with Sideways Moves\n" \
 "                    3) Basic Hill Climb with Restart\n" \
 "                    4) Hill Climb with Sideway Moves and restarts\n")
+numOfLoops = input("how many times do you want to run this? ")
 
+passes = []
+fails = []
+restarts = []
 if solveMethod == "1":
-    baseHillClimb(int(nSize))
+    for i in range(int(numOfLoops)):
+        numSteps, ifSucceeded = baseHillClimb(int(nSize))
+        print(ifSucceeded)
+        if ifSucceeded == True:
+            passes.append(numSteps)
+        else:
+            fails.append(numSteps)
+    print(f"{sum(passes)/len(passes)} average steps for success")
+    print(f"{sum(fails)/len(fails)} average steps for fails")
 elif solveMethod == "2":
-    sidewaysHillClimb(int(nSize))
+    for i in range(int(numOfLoops)):
+        numSteps, ifSucceeded = sidewaysHillClimb(int(nSize))
+        print(ifSucceeded)
+        if ifSucceeded == True:
+            passes.append(numSteps)
+        else:
+            fails.append(numSteps)
+    print(f"{sum(passes)/len(passes)} average steps for success")
+    print(f"{sum(fails)/len(fails)} average steps for fails")
 elif solveMethod == "3":
-    baseHillClimbRestart(int(nSize), -1)
+    for i in range(int(numOfLoops)):
+        numRestarts, numSteps = baseHillClimbRestart(int(nSize), -1, 0)
+        passes.append(numSteps)
+        restarts.append(numRestarts)
+    print(f"{sum(passes)/len(passes)} average steps for success")
+    print(f"{sum(restarts)/len(restarts)} average restarts")
 elif solveMethod == "4":
-    sidewaysHillClimbRestart(int(nSize), -1)
+    for i in range(int(numOfLoops)):
+        numRestarts, numSteps = sidewaysHillClimbRestart(int(nSize), -1, 0)
+        passes.append(numSteps)
+        restarts.append(numRestarts)
+    print(f"{sum(passes)/len(passes)} average steps for success")
+    print(f"{sum(restarts)/len(restarts)} average restarts")
 else:
     print("you did not provide a proper argument of 1-4 run the program again")
-#sidewaysHillClimb()
