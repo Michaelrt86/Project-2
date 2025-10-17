@@ -127,7 +127,7 @@ def sidewaysHillClimb(n):
             print("No Solution Found (Hill Climb Stuck)")
             print(result.queenArray)
             print(result.currentScore)
-            return i + 1, True
+            return i + 1, False
         elif result.currentScore == 0:
             print("Solution Found")
             print(result.queenArray)
@@ -135,10 +135,7 @@ def sidewaysHillClimb(n):
             return i + 1, True
         elif result.currentScore == currentScore:
             print(f"{sidewaysArray} sideways array list")
-            if len(sidewaysArray) == 1:
-                mainBoard = copy.deepcopy(sidewaysArray[0])
-            else:
-                mainBoard = copy.deepcopy(sidewaysArray[random.randint(0, len(sidewaysArray) - 1)])
+            mainBoard = copy.deepcopy(sidewaysArray[random.randint(0, len(sidewaysArray) - 1)])
             sidewaysCount += 1
             continue
         mainBoard = copy.deepcopy(result.queenArray)
