@@ -123,7 +123,7 @@ def sidewaysHillClimb(n):
     for i in range (1000): #The number of steps we will currently take in our hill climb before breaking
         result, sidewaysArray = testScoreSideways(mainBoard, n, currentScore)
         print(result.queenArray)
-        if result.currentScore > currentScore or sidewaysCount == 10:
+        if result.currentScore > currentScore or sidewaysCount == 100:
             print("No Solution Found (Hill Climb Stuck)")
             print(result.queenArray)
             print(result.currentScore)
