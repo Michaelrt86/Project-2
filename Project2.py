@@ -216,8 +216,12 @@ if solveMethod == "1":
             passes.append(numSteps)
         else:
             fails.append(numSteps)
+
+    #Printing out our results here towards the end!
+    print("Success Rate: " + str(len(passes) / int(numOfLoops) * 100) + "%") #Success Rate here
     if len(passes) != 0:
-        print(f"{sum(passes)/len(passes)} average steps for success")
+        print(f"{sum(passes)/len(passes)} average steps for success")        #Average steps in success here
+    print("Failure Rate: " + str(len(fails) / int(numOfLoops) * 100) + "%")
     if len(fails) != 0:
         print(f"{sum(fails)/len(fails)} average steps for fails")
 elif solveMethod == "2":
@@ -228,8 +232,11 @@ elif solveMethod == "2":
             passes.append(numSteps)
         else:
             fails.append(numSteps)
+    #Printing out our results here towards the end!
+    print("Success Rate: " + str(len(passes) / int(numOfLoops) * 100) + "%")
     if len(passes) != 0:
         print(f"{sum(passes)/len(passes)} average steps for success")
+    print("Failure Rate: " + str(len(fails) / int(numOfLoops) * 100) + "%")
     if len(fails) != 0:
         print(f"{sum(fails)/len(fails)} average steps for fails")
 elif solveMethod == "3":
